@@ -57,7 +57,25 @@ func ExportToFile(path string, env EnvMap, format ExportFormat) error {
 		return fmt.Errorf("creating export file: %w", err)
 	}
 	defer f.Close()
-	return Export(f, env, format)
+	if err := Export(f, env, format); err != nil {
+		return err
+	}
+	return f.Close()
+}
+
+// ParseFormat converts a string to an ExportFormat, returning an error if the
+// value is not a recognised format name.
+func ParseFormat(s string) (ExportFormat, error) {
+	switch ExportFormat(strings.ToLower(s)) {
+	case FormatDotenv:
+		return FormatDotenv, nil
+	case FormatExport:
+		return FormatExport, nil
+	case FormatJSON:
+		return FormatJSON, nil
+	default:
+		return "", fmt.Errorf("unknown export format: %q (valid: dotenv, export, json)", s)
+	}
 }
 
 func quoteIfNeeded(v string) string {
