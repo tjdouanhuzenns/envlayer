@@ -25,6 +25,12 @@ func (e *EnvMap) Set(key, value string) {
 	e.Values[key] = value
 }
 
+// Get returns the value for a key and whether it was found.
+func (e *EnvMap) Get(key string) (string, bool) {
+	v, ok := e.Values[key]
+	return v, ok
+}
+
 // ParseFile reads and parses a .env file into an EnvMap.
 func ParseFile(path string) (*EnvMap, error) {
 	f, err := os.Open(path)
