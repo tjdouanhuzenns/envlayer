@@ -80,3 +80,19 @@ func TestInterpolate_EmptyMap(t *testing.T) {
 		t.Errorf("expected empty result, got %v", result)
 	}
 }
+
+func TestInterpolate_ChainedReferences(t *testing.T) {
+	// A -> B -> C: ensure multi-level interpolation resolves correctly.
+	env := EnvMap{
+		"C": "world",
+		"B": "hello ${C}",
+		"A": "${B}!",
+	}
+	result, err := Interpolate(env, InterpolateOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got := result["A"]; got != "hello world!" {
+		t.Errorf("A = %q, want %q", got, "hello world!")
+	}
+}
